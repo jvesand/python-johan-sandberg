@@ -1,0 +1,1 @@
+print("hej from module2.py")

@@ -1,5 +1,5 @@
 from __future__ import annotations
-import sys, os
+import sys, os # accesses "system"? and operating system
 import unittest
 
 print(__file__)
