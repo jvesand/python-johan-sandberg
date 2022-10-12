@@ -8,18 +8,39 @@ class Shape:
         self.y = y
 
     # add validation code for x,y
+    @property
+    def x(self) -> float:
+        return self._x
 
-    # translate()
+    @x.setter
+    def x(self, value) -> None:
+        self._x = value
 
-    # operator overloads()
+    # cross shape operator overloads based on area (<, >, <=, >=)
+    def __lt__(self, other: Shape) -> bool:
+        """<, evaluates TRUE if first shape has a smaller area than the second shape"""
+        return self.area < other.area
 
-    # is_inside()
+    def __gt__(self, other: Shape) -> bool:
+        """>, evaluates TRUE if first shape has a larger area than the second shape"""
+        return self.area > other.area
+
+    def __le__(self, other: Shape) -> bool:
+        """<=, evaluates TRUE if first shape has an area smaller than or equal to the second shape"""
+        return self.area <= other.area
+
+    def __ge__(self, other: Shape) -> bool:
+        """>=, evaluates TRUE if first shape has an area larger than or equal to the second shape"""
+        return self.area >= other.area
+
+    def translate(self, x: float, y: float) -> None:
+        self.x = x
+        self.y = y
 
     def __str__(self) -> str:
         return f"An instance of the {self.__class__.__name__} class: {self.__repr__()}\n" \
             f"The {self.__class__.__name__.lower()} has an area of {self.area} and a circumference of {self.circumference}.\n" \
-            f"{self.is_special()}\n"                
-
+            f"{self.is_special()}\n"
 
 
 class Rectangle(Shape):
@@ -48,12 +69,22 @@ class Rectangle(Shape):
 
     def is_special(self) -> str:
         if self.side1 == self.side2:
-            return "The rectangle is square"
+            return "The rectangle is square."
         else:
-            return "The rectangle is not square"
+            return "The rectangle is not square."
+
+    def is_inside(self, x: float, y: float) -> bool:
+        return (self.x - self.side1/2 <= x <= self.x + self.side1/2) and \
+            (self.y - self.side2/2 <= y <= self.y + self.side2/2)
+
+    def __eq__(self, other: Rectangle) -> bool:
+        """==, evaluates TRUE if two rectangles have the same location and shape"""
+        return (self.__class__ == other.__class__ and self.x == other.x and \
+            self.y == other.y and self.side1 == other.side1 and self.side2 == other.side2)
 
     def __repr__(self) -> str:
         return f"Rectangle(x = {self.x}, y = {self.y}, side1 = {self.side1}, side2 = {self.side2})"
+
 
 class Circle(Shape):
     """Circle"""
@@ -83,6 +114,11 @@ class Circle(Shape):
             return "The circle is a unit circle."
         else:
             return "The circle is not a unit circle"
+
+    def __eq__(self, other: Circle) -> bool:
+        """==, evaluates TRUE if two circles have the same location and radius"""
+        return (self.__class__ == other.__class__ and self.x == other.x and \
+            self.y == other.y and self.radius == other.radius)
 
     def __repr__(self) -> str:
         return f"Circle(x = {self.x}, y = {self.y}, radius = {self.radius})"
