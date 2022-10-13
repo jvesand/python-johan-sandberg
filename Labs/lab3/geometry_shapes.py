@@ -5,19 +5,30 @@ import matplotlib.patches as mpatches
 
 
 class Shape:
-    """Shapes parent class"""
+    """Parent class to child classes of various geometric shapes"""
     def __init__(self, x: float, y: float) -> None:
         self.x = x
         self.y = y
 
-    # add validation code for x,y
     @property
     def x(self) -> float:
         return self._x
 
     @x.setter
     def x(self, value) -> None:
+        if not isinstance(value, (int, float)):
+            raise TypeError(f"x must be either int or float, not {type(value).__name__}")
         self._x = value
+
+    @property
+    def y(self) -> float:
+        return self._y
+
+    @y.setter
+    def y(self, value) -> None:
+        if not isinstance(value, (int, float)):
+            raise TypeError(f"y must be either int or float, not {type(value).__name__}")
+        self._y = value
 
     # cross shape operator overloads based on area (<, >, <=, >=)
     def __lt__(self, other: Shape) -> bool:
@@ -36,7 +47,7 @@ class Shape:
         """>=, evaluates TRUE if first shape has an area larger than or equal to the second shape"""
         return self.area >= other.area
 
-    def translate(self, x: float, y: float, z = None) -> None:
+    def translate(self, x: float, y: float, z = None):
         """Translates shape to given center coordinates. Original shape is plotted in blue; translated shape is plotted in green."""
         fig, ax = plt.subplots()
         self.plot_shape(fig=fig, ax=ax)
@@ -53,20 +64,35 @@ class Shape:
 
 
 class Rectangle(Shape):
-    """Rectangle"""
+    """Rectangle class, child class of Shape, representing a rectangular geometric shape"""
     def __init__(self, x, y: float, side1: float, side2: float) -> None:
         super().__init__(x, y)
         self.side1 = side1
         self.side2 = side2
 
-    # add validation code for side1, side2
     @property
     def side1(self) -> float:
         return self._side1
 
     @side1.setter
     def side1(self, value) -> None:
+        if not isinstance(value, (float, int)):
+            raise TypeError(f"side1 must be either int or float, not {type(value).__name__}")
+        elif value <= 0:
+            raise ValueError("side1 must be positive")
         self._side1 = value
+
+    @property
+    def side2(self) -> float:
+        return self._side2
+
+    @side2.setter
+    def side2(self, value) -> None:
+        if not isinstance(value, (float, int)):
+            raise TypeError(f"side2 must be either int or float, not {type(value).__name__}")
+        elif value <= 0:
+            raise ValueError("side2 must be positive")
+        self._side2 = value
 
     @property
     def area(self) -> float:
@@ -83,8 +109,10 @@ class Rectangle(Shape):
             return "The rectangle is not square."
 
     def is_inside(self, x: float, y: float) -> bool:
-        return (self.x - self.side1/2 <= x <= self.x + self.side1/2) and \
-            (self.y - self.side2/2 <= y <= self.y + self.side2/2)
+        """Checks whether given (x,y) coords are inside the rectangular geometric shape"""
+        coords = Shape(x,y) # uses error handling from Shape class
+        return (self.x - self.side1/2 <= coords.x <= self.x + self.side1/2) and \
+            (self.y - self.side2/2 <= coords.y <= self.y + self.side2/2)
 
     # plotting a rectangle with matplotlib.patches.Rectangle()
     # source: https://www.statology.org/matplotlib-rectangle/
@@ -108,18 +136,21 @@ class Rectangle(Shape):
 
 
 class Circle(Shape):
-    """Circle"""
+    """Circle class, child class of Shape, representing a circular geometric shape"""
     def __init__(self, x: float, y: float, radius: float) -> None:
         super().__init__(x, y)
         self.radius = radius
 
-    # add validation code for radius
     @property
     def radius(self) -> float:
         return self._radius
 
     @radius.setter
     def radius(self, value) -> None:
+        if not isinstance(value, (float, int)):
+            raise TypeError(f"radius must be either int or float, not {type(value).__name__}")
+        elif value <= 0:
+            raise ValueError("radius must be positive")        
         self._radius = value
 
     @property
@@ -135,6 +166,11 @@ class Circle(Shape):
             return "The circle is a unit circle."
         else:
             return "The circle is not a unit circle"
+
+    def is_inside(self, x: float, y: float) -> bool:
+        """Checks whether given (x,y) coordinates are inside the circle"""
+        coords = Shape(x,y) # uses error handling from Shape class
+        return np.linalg.norm(np.asarray([coords.x,coords.y]) - np.asarray([self.x, self.y])) <= self.radius
 
     # plotting a circle using matplotlib.patches.Circle()
     # source: https://www.pythonpool.com/matplotlib-circle/
