@@ -1,5 +1,8 @@
 from __future__ import annotations
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+
 
 class Shape:
     """Shapes parent class"""
@@ -33,14 +36,20 @@ class Shape:
         """>=, evaluates TRUE if first shape has an area larger than or equal to the second shape"""
         return self.area >= other.area
 
-    def translate(self, x: float, y: float) -> None:
-        self.x = x
-        self.y = y
+    def translate(self, x: float, y: float, z = None) -> None:
+        """Translates shape to given center coordinates. Original shape is plotted in blue; translated shape is plotted in green."""
+        fig, ax = plt.subplots()
+        self.plot_shape(fig=fig, ax=ax)
+        self.x, self.y = x, y
+        self.plot_shape(fig=fig, ax=ax, color='green')
 
     def __str__(self) -> str:
-        return f"An instance of the {self.__class__.__name__} class: {self.__repr__()}\n" \
+        return_string = f"An instance of the {self.__class__.__name__} class: {self.__repr__()}\n" \
             f"The {self.__class__.__name__.lower()} has an area of {self.area} and a circumference of {self.circumference}.\n" \
-            f"{self.is_special()}\n"
+            f"{self.is_unit()}\n"
+        if hasattr(self, "z"):
+            return_string += "test"
+        return return_string
 
 
 class Rectangle(Shape):
@@ -67,7 +76,7 @@ class Rectangle(Shape):
     def circumference(self) -> float:
         return (self.side1 + self.side2) * 2
 
-    def is_special(self) -> str:
+    def is_unit(self) -> str:
         if self.side1 == self.side2:
             return "The rectangle is square."
         else:
@@ -76,6 +85,18 @@ class Rectangle(Shape):
     def is_inside(self, x: float, y: float) -> bool:
         return (self.x - self.side1/2 <= x <= self.x + self.side1/2) and \
             (self.y - self.side2/2 <= y <= self.y + self.side2/2)
+
+    # plotting a rectangle with matplotlib.patches.Rectangle()
+    # source: https://www.statology.org/matplotlib-rectangle/
+    def plot_shape(self, fig = None, ax = None, color="blue"):
+        # if plotting outside of translation, need to instantiate fig,ax
+        if fig == None:
+            fig, ax = plt.subplots()
+        anchor_x = self.x - self.side1/2
+        anchor_y = self.y - self.side2/2
+        ax.set_aspect(1)
+        ax.add_patch(mpatches.Rectangle((anchor_x, anchor_y), self.side1, self.side2, facecolor=color))
+        ax.autoscale(enable=True)        
 
     def __eq__(self, other: Rectangle) -> bool:
         """==, evaluates TRUE if two rectangles have the same location and shape"""
@@ -109,11 +130,22 @@ class Circle(Shape):
     def circumference(self) -> float:
         return 2 * np.pi * self.radius
 
-    def is_special(self) -> str:
+    def is_unit(self) -> str:
         if self.radius == 1 and self.x == 0 and self.y == 0:
             return "The circle is a unit circle."
         else:
             return "The circle is not a unit circle"
+
+    # plotting a circle using matplotlib.patches.Circle()
+    # source: https://www.pythonpool.com/matplotlib-circle/
+    def plot_shape(self, fig = None, ax = None, color='blue'):
+        # if plotting outside of translation, need to instantiate fig,ax
+        if fig == None:
+            fig, ax = plt.subplots()
+        ax.set_aspect(1)
+        ax.add_patch(mpatches.Circle((self.x, self.y), self.radius, facecolor=color))
+        ax.autoscale(enable=True)        
+
 
     def __eq__(self, other: Circle) -> bool:
         """==, evaluates TRUE if two circles have the same location and radius"""
