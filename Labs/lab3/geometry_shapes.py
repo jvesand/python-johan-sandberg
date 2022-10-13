@@ -6,10 +6,9 @@ import matplotlib.patches as mpatches
 
 class Shape:
     """Parent class to child classes of various geometric shapes"""
-    def __init__(self, x: float, y: float, z = 0) -> None:
+    def __init__(self, x: float, y: float) -> None:
         self.x = x
         self.y = y
-        self.z = z
 
     @property
     def x(self) -> float:
@@ -30,16 +29,6 @@ class Shape:
         if not isinstance(value, (int, float)):
             raise TypeError(f"y must be either int or float, not {type(value).__name__}")
         self._y = value
-
-    @property
-    def z(self) -> float:
-        return self._z
-
-    @z.setter
-    def z(self, value) -> None:
-        if not isinstance(value, (int, float)):
-            raise TypeError(f"z must be either int or float, not {type(value).__name__}")
-        self._z = value
 
     # cross operator overloads based on area (<, >, <=, >=)
     def __lt__(self, other: Shape) -> bool:
@@ -81,7 +70,8 @@ class Rectangle(Shape):
     Its methods have been expanded to accomodate three dimensions (Cube child class)
     For rectangles: z = 0 and side 3 = 0"""
     def __init__(self, x: float, y: float, side1: float, side2: float, z = 0, side3 = 0) -> None:
-        super().__init__(x, y, z)
+        super().__init__(x, y)
+        self.z = z
         self.side1 = side1
         self.side2 = side2
         self.side3 = side3
@@ -111,18 +101,6 @@ class Rectangle(Shape):
         self._side2 = value
 
     @property
-    def side3(self) -> float:
-        return self._side3
-
-    @side3.setter
-    def side3(self, value) -> None:
-        if not isinstance(value, (float, int)):
-            raise TypeError(f"side3 must be either int or float, not {type(value).__name__}")
-        elif value < 0:
-            raise ValueError("side3 must be positive")
-        self._side3 = value
-
-    @property
     def area(self) -> float:
         """Area of the rectangle"""
         return self.side1 * self.side2
@@ -145,10 +123,9 @@ class Rectangle(Shape):
 
     def is_inside(self, x: float, y: float, z=0) -> bool:
         """Checks whether given coordinates are inside the shape"""
-        coords = Shape(x,y,z) # uses error handling from Shape class
-        return (self.x - self.side1/2 <= coords.x <= self.x + self.side1/2) and \
-            (self.y - self.side2/2 <= coords.y <= self.y + self.side2/2) and \
-                (self.z - self.side3/2 <= coords.z <= self.z + self.side3/2)
+        return (self.x - self.side1/2 <= x <= self.x + self.side1/2) and \
+            (self.y - self.side2/2 <= y <= self.y + self.side2/2) and \
+                (self.z - self.side3/2 <= z <= self.z + self.side3/2)
 
     # plotting a rectangle with matplotlib.patches.Rectangle()
     # source: https://www.statology.org/matplotlib-rectangle/
@@ -181,7 +158,8 @@ class Circle(Shape):
     Its methods have been expanded to accomodate three dimensions (Sphere child class)
     For circles: z = 0"""    
     def __init__(self, x: float, y: float, radius: float, z = 0) -> None:
-        super().__init__(x, y, z)
+        super().__init__(x, y)
+        self.z = z
         self.radius = radius
 
     @property
@@ -216,8 +194,7 @@ class Circle(Shape):
 
     def is_inside(self, x: float, y: float, z=0) -> bool:
         """Checks whether given coordinates are inside the shape."""
-        coords = Shape(x,y,z) # uses error handling from Shape class
-        return np.linalg.norm(np.asarray([coords.x,coords.y,coords.z]) - np.asarray([self.x, self.y, self.z])) <= self.radius
+        return np.linalg.norm(np.asarray([x,y,z]) - np.asarray([self.x, self.y, self.z])) <= self.radius
 
     # plotting a circle using matplotlib.patches.Circle()
     # source: https://www.pythonpool.com/matplotlib-circle/
@@ -245,7 +222,31 @@ class Circle(Shape):
 class Cube(Rectangle):
     """Cube class, child class of Rectangle, representing a cuboid geometric shape"""
     def __init__(self, x: float, y: float, z: float, side1: float, side2: float, side3: float) -> None:
-        super().__init__(x, y, z, side1, side2, side3)
+        super().__init__(x, y, side1, side2)
+        self.z = z
+        self.side3 = side3
+
+    @property
+    def z(self) -> float:
+        return self._z
+
+    @z.setter
+    def z(self, value) -> None:
+        if not isinstance(value, (int, float)):
+            raise TypeError(f"z must be either int or float, not {type(value).__name__}")
+        self._z = value        
+
+    @property
+    def side3(self) -> float:
+        return self._side3
+
+    @side3.setter
+    def side3(self, value) -> None:
+        if not isinstance(value, (float, int)):
+            raise TypeError(f"side3 must be either int or float, not {type(value).__name__}")
+        elif value < 0:
+            raise ValueError("side3 must be positive")
+        self._side3 = value
         
     @property
     def area(self) -> float:
@@ -264,7 +265,18 @@ class Cube(Rectangle):
 class Sphere(Circle):
     """Sphere class, child class of Circle, representing a spherical geometric shape"""    
     def __init__(self, x: float, y: float, z: float, radius: float) -> None:
-        super().__init__(x, y, radius, z)
+        super().__init__(x, y, radius)
+        self.z = z
+
+    @property
+    def z(self) -> float:
+        return self._z
+
+    @z.setter
+    def z(self, value) -> None:
+        if not isinstance(value, (int, float)):
+            raise TypeError(f"z must be either int or float, not {type(value).__name__}")
+        self._z = value                
 
     @property
     def area(self) -> float:
