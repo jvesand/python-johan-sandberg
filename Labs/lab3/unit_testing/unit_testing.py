@@ -59,10 +59,10 @@ class TestRectangle(unittest.TestCase):
         self.assertFalse(rect1.is_inside(20,20))
 
     # def test_translation(self):
-        # rect1 = self.create_rectangle()
-        # rect1.translate(20,20)
-        # rect2 = Rectangle(20, 20, 10, 10)
-        # self.assertEqual((rect1.x, rect1.y), (rect2.x, rect2.y))
+    #     rect1 = self.create_rectangle()
+    #     rect1.translate(20,20)
+    #     rect2 = Rectangle(20, 20, 10, 10)
+    #     self.assertEqual((rect1.x, rect1.y), (rect2.x, rect2.y))
 
     def test_equality1(self):
         rect1 = self.create_rectangle()
@@ -187,11 +187,11 @@ class TestCube(unittest.TestCase):
 
     def test_is_inside1(self):
         cube1 = self.create_cube()
-        self.assertTrue(cube1.is_inside(0,0,z=0))
+        self.assertTrue(cube1.is_inside(0,0,0))
 
     def test_is_inside2(self):
         cube1 = self.create_cube()
-        self.assertFalse(cube1.is_inside(20,20,z=20))
+        self.assertFalse(cube1.is_inside(20,20,20))
 
     # def test_translation(self):
     #     cube1 = self.create_cube()
@@ -254,11 +254,11 @@ class TestSphere(unittest.TestCase):
 
     def test_is_inside1(self):
         sphere1 = self.create_sphere()
-        self.assertTrue(sphere1.is_inside(0,0,z=0))
+        self.assertTrue(sphere1.is_inside(0,0,0))
 
     def test_is_inside2(self):
         sphere1 = self.create_sphere()
-        self.assertFalse(sphere1.is_inside(20,20,z=20))
+        self.assertFalse(sphere1.is_inside(20,20,20))
 
     # def test_translation(self):
     #     sphere1 = self.create_sphere()
